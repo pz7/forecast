@@ -17,7 +17,7 @@ First build the project and put into distribution folder
 
 ```./gradlew installDist```
 
-then run it
+then run it (you might need to give execution permission to the script using ```chmod```)
 
 ```./run-forecast-app.sh```
 
