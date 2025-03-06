@@ -9,7 +9,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class WeatherService {
-    private static final String WEATHER_API_KEY = "d763a233e0d81d5bae49f1b3f3487db7";
 
     private final HttpClient client;
 
@@ -22,7 +21,7 @@ public class WeatherService {
                 "https://api.openweathermap.org/data/2.5/weather?lat=%s&lon=%s&appid=%s&units=imperial",
                 coordinates.lat,
                 coordinates.lon,
-                WEATHER_API_KEY
+                Secrets.WEATHER_API_KEY
         );
 
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(apiUrl)).build();

@@ -12,8 +12,6 @@ import org.json.JSONObject;
 
 public class GeoService {
 
-    private static final String GEOAPIFY_API_KEY = "4bfc17fa7df34e28979b546b13705d94";
-
     private final HttpClient client;
 
     public GeoService(HttpClient client) {
@@ -25,7 +23,7 @@ public class GeoService {
         String apiUrl = String.format(
                 "https://api.geoapify.com/v1/geocode/search?text=%s&apiKey=%s",
                 encodedAddress,
-                GEOAPIFY_API_KEY
+                Secrets.GEOAPIFY_API_KEY
         );
 
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(apiUrl)).build();
