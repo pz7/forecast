@@ -38,3 +38,16 @@ The CLI is interactive and these command options are available:
 # Output
 The app provides city, state code, country code, current temperature, low, and high for a given address.
 The output will contain ```(**cached indicator**)``` in case the result was retrieved from cache.
+
+# TODOs
+The project is in a certain shape, there are possible follow up improvements:
+- Error handling - add error handling of system failure, specifically the connection failures, downstream services unavailability etc.
+- Validation - add validation to the input and downstream services requests and responses
+- Logging - add logging to the project
+- DI - add dependency injection to the project
+- Refactor - refactor the code to make it more readable and maintainable and in line with DI
+- Cache - use 3rd party cache library to make more robust
+- Tests - add more tests
+- FE - add a simple frontend to the project
+- L10N - add localization to the project
+- Performance - evaluate and improve performance of the project
