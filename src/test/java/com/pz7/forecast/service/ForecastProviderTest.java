@@ -37,6 +37,10 @@ public class ForecastProviderTest {
 
         String cachedResult = forecastProvider.getForecast(address);
         assertThat(cachedResult).isEqualTo("Temperature: 75.0 °F, low: 72.3 °F, high: 76.8 °F (**cached indicator**)");
+
+        String addressDiffersWithSpaces = "123 Main St,San Francisco,CA";
+        String cachedResult2 = forecastProvider.getForecast(addressDiffersWithSpaces);
+        assertThat(cachedResult2).isEqualTo("Temperature: 75.0 °F, low: 72.3 °F, high: 76.8 °F (**cached indicator**)");
     }
 
     private void givenGeoService(String address, String coordinates) throws IOException, InterruptedException {

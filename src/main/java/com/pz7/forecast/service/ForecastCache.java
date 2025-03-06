@@ -36,7 +36,7 @@ public class ForecastCache {
 
     private static String getKey(String address) {
         // TODO Normalize the address to avoid duplicates in the cache
-        return address.toLowerCase().trim();
+        return address.toLowerCase().replaceAll("[^a-zA-Z0-9]", ""); // removes all non-alphanumeric characters
     }
 
     private static class CacheEntry {
