@@ -41,6 +41,7 @@ The output will contain ```(**cached indicator**)``` in case the result was retr
 
 # TODOs
 The project is in a certain shape, there are possible follow up improvements:
+- API keys - add API keys management
 - Error handling - add error handling of system failure, specifically the connection failures, downstream services unavailability etc.
 - Validation - add validation to the input and downstream services requests and responses
 - Logging - add logging to the project
