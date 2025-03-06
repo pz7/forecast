@@ -12,8 +12,21 @@ The output will contain ```(**cached indicator**)``` in case the result was retr
 
 ## Execution
 
-Can be run as a CLI using:
+The project can be run as a CLI
 
+## Run with Bash script
+First build the project and put into distribution folder
+
+```./gradlew installDist```
+
+then run it
+
+```./run-forecast-app.sh```
+
+
+## Run with gradle task
+
+For testing purposes
 ```
 ./gradlew runApp --console=plain
 ```
