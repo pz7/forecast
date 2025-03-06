@@ -35,7 +35,7 @@ public class GeoService {
             if (features.length() > 0) {
                 JSONObject geometry = features.getJSONObject(0).getJSONObject("geometry");
                 JSONArray coordinates = geometry.getJSONArray("coordinates");
-                return Coordinates.of(coordinates.getDouble(0), coordinates.getDouble(1));
+                return Coordinates.of(coordinates.getDouble(1), coordinates.getDouble(0));
             }
         }
 
@@ -46,7 +46,7 @@ public class GeoService {
         public final double lat;
         public final double lon;
 
-        private Coordinates(double lon, double lat) {
+        private Coordinates(double lat, double lon) {
             this.lat = lat;
             this.lon = lon;
         }
