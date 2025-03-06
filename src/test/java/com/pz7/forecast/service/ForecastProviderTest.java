@@ -33,14 +33,14 @@ public class ForecastProviderTest {
         givenWeatherService("-74.006", "40.7128", "75.0", "72.3", "76.8");
 
         String result = forecastProvider.getForecast(address);
-        assertThat(result).isEqualTo("Temperature: 75.0 °F, low: 72.3 °F, high: 76.8 °F");
+        assertThat(result).isEqualTo("San Francisco, CA, US: Temperature: 75.0 °F, low: 72.3 °F, high: 76.8 °F");
 
         String cachedResult = forecastProvider.getForecast(address);
-        assertThat(cachedResult).isEqualTo("Temperature: 75.0 °F, low: 72.3 °F, high: 76.8 °F (**cached indicator**)");
+        assertThat(cachedResult).isEqualTo("San Francisco, CA, US: Temperature: 75.0 °F, low: 72.3 °F, high: 76.8 °F (**cached indicator**)");
 
         String addressDiffersWithSpaces = "123 Main St,San Francisco,CA";
         String cachedResult2 = forecastProvider.getForecast(addressDiffersWithSpaces);
-        assertThat(cachedResult2).isEqualTo("Temperature: 75.0 °F, low: 72.3 °F, high: 76.8 °F (**cached indicator**)");
+        assertThat(cachedResult2).isEqualTo("San Francisco, CA, US: Temperature: 75.0 °F, low: 72.3 °F, high: 76.8 °F (**cached indicator**)");
     }
 
     @Test
@@ -63,7 +63,8 @@ public class ForecastProviderTest {
         HttpResponse<String> geoResponse = mock(HttpResponse.class);
         when(geoResponse.statusCode()).thenReturn(200);
         when(geoResponse.body()).thenReturn(String.format("""
-                { "features": [{ "geometry": { "coordinates": %s } }] }
+                { "features": [{ "geometry": { "coordinates": %s },
+                 "properties": { "city": "San Francisco", "state_code": "CA", "country_code": "us" } }] }
                 """, coordinates));
         HttpRequest geoRequest = HttpRequest.newBuilder().uri(URI.create(
                 String.format("https://api.geoapify.com/v1/geocode/search?text=%s&apiKey=4bfc17fa7df34e28979b546b13705d94",

@@ -22,17 +22,9 @@ dependencies {
 test {
     useJUnitPlatform()
 }
-//
-//sourceSets {
-//    test {
-//        java {
-//            srcDirs = ['src/test/java']
-//        }
-//    }
-//}
 
 tasks.register('runApp', JavaExec) {
-    main = 'com.pz7.forecast.ForecastApp'
+    mainClass = 'com.pz7.forecast.ForecastApp'
     classpath = sourceSets.main.runtimeClasspath
     standardInput = System.in
 }

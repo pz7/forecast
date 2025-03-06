@@ -2,6 +2,7 @@
 
 This is a simple project to forecast the weather using the Geoapify and OpenWeatherMap API.
 As of now provides current temperature, low, and high for a given address.
+The output will contain ```(**cached indicator**)``` in case the result was retrieved from cache.
 
 ## Tests
 

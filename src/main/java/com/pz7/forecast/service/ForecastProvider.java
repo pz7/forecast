@@ -38,12 +38,30 @@ public class ForecastProvider {
         }
 
         try {
-            GeoService.Coordinates coordinates = geoService.getCoordinates(address);
-            String forecast = weatherService.getForecast(coordinates);
-            forecastCache.put(address, forecast);
-            return forecast;
+            GeoService.Response response = geoService.getCoordinates(address);
+            String forecast = weatherService.getForecast(response.coordinates);
+
+            String output = formatOutput(response, forecast);
+            forecastCache.put(address, output);
+
+            return output;
         } catch (IllegalArgumentException e) {
             return e.getMessage();
         }
+    }
+
+    private static String formatOutput(GeoService.Response response, String forecast) {
+        StringBuilder sb = new StringBuilder();
+        if (response.city != null) {
+            sb.append(response.city);
+        }
+        if (response.stateCode != null) {
+            sb.append(", ").append(response.stateCode.toUpperCase());
+        }
+        if (response.countryCode != null) {
+            sb.append(", ").append(response.countryCode.toUpperCase());
+        }
+        sb.append(": ").append(forecast);
+        return sb.toString();
     }
 }

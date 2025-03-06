@@ -18,7 +18,7 @@ public class GeoService {
         this.client = client;
     }
 
-    public Coordinates getCoordinates(String address) throws IOException, InterruptedException {
+    public Response getCoordinates(String address) throws IOException, InterruptedException {
         String encodedAddress = URLEncoder.encode(address, StandardCharsets.UTF_8);
         String apiUrl = String.format(
                 "https://api.geoapify.com/v1/geocode/search?text=%s&apiKey=%s",
@@ -35,7 +35,15 @@ public class GeoService {
             if (features.length() > 0) {
                 JSONObject geometry = features.getJSONObject(0).getJSONObject("geometry");
                 JSONArray coordinates = geometry.getJSONArray("coordinates");
-                return Coordinates.of(coordinates.getDouble(1), coordinates.getDouble(0));
+                double lat = coordinates.getDouble(1);
+                double lon = coordinates.getDouble(0);
+
+                JSONObject properties = features.getJSONObject(0).getJSONObject("properties");
+                String city = properties.getString("city");
+                String stateCode = properties.getString("state_code");
+                String countryCode = properties.getString("country_code");
+
+                return Response.of(city, stateCode, countryCode, Coordinates.of(lat, lon));
             } else {
                 throw new IllegalArgumentException("No coordinates found for address: " + address);
             }
@@ -46,6 +54,28 @@ public class GeoService {
         }
 
         throw new IllegalStateException("Geo request failed: " + response.statusCode() + " " + response.body());
+    }
+
+    public static class Response {
+        public final String city;
+        public final String stateCode;
+        public final String countryCode;
+        public final Coordinates coordinates;
+
+        private Response(String city, String stateCode, String countryCode, Coordinates coordinates) {
+            this.city = city;
+            this.stateCode = stateCode;
+            this.countryCode = countryCode;
+            this.coordinates = coordinates;
+        }
+
+        public static Response of(String city, String stateCode, String countryCode, Coordinates coordinates) {
+            return new Response(city, stateCode, countryCode, coordinates);
+        }
+
+        public String toString() {
+            return "Response[" + "city=" + city + ", stateCode=" + stateCode + ", countryCode=" + countryCode + ']';
+        }
     }
 
     public static class Coordinates {
