@@ -40,11 +40,11 @@ public class ForecastProviderTest {
                         URLEncoder.encode(address, StandardCharsets.UTF_8)))).build();
         when(httpClient.send(geoRequest, HttpResponse.BodyHandlers.ofString())).thenReturn(geoResponse);
 
-        // WaetherService
+        // WeatherService
         HttpResponse<String> weatherResponse = mock(HttpResponse.class);
         when(weatherResponse.statusCode()).thenReturn(200);
         when(weatherResponse.body()).thenReturn("""
-                { "main": { "temp": 75.0 } }
+                { "main": { "temp": 75.0, "temp_min": 72.3, "temp_max": 76.8 } }
                 """);
         HttpRequest weatherRequest = HttpRequest.newBuilder().uri(URI.create(
                 "https://api.openweathermap.org/data/2.5/weather?lat=40.7128&lon=-74.006&appid=d763a233e0d81d5bae49f1b3f3487db7&units=imperial")).build();
@@ -52,6 +52,10 @@ public class ForecastProviderTest {
 
         String result = forecastProvider.getForecast(address);
 
-        assertThat(result).isEqualTo("Temperature: 75.0 °F");
+        assertThat(result).isEqualTo("Temperature: 75.0 °F, low: 72.3 °F, high: 76.8 °F");
+
+        String cachedResult = forecastProvider.getForecast(address);
+
+        assertThat(cachedResult).isEqualTo("Temperature: 75.0 °F, low: 72.3 °F, high: 76.8 °F (**cached indicator**)");
     }
 }

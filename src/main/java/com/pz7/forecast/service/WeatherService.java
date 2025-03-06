@@ -31,7 +31,9 @@ public class WeatherService {
             JSONObject jsonResponse = new JSONObject(response.body());
             JSONObject main = jsonResponse.getJSONObject("main");
             double temp = main.getDouble("temp");
-            return "Temperature: " + temp + " °F";
+            double tempLow = main.getDouble("temp_min");
+            double tempHigh = main.getDouble("temp_max");
+            return String.format("Temperature: %s °F, low: %s °F, high: %s °F", temp, tempLow, tempHigh);
         }
 
         throw new IllegalStateException("Weather request failed: " + response.statusCode() + " " + response.body());

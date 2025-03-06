@@ -30,7 +30,7 @@ public class ForecastProvider {
     public String getForecast(String address) throws IOException, InterruptedException {
         String cachedForecast = forecastCache.get(address);
         if (cachedForecast != null) {
-            return cachedForecast;
+            return cachedForecast + " (**cached indicator**)";
         }
 
         GeoService.Coordinates coordinates = geoService.getCoordinates(address);
