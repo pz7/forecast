@@ -3,6 +3,7 @@ package com.pz7.forecast.service;
 import java.util.HashMap;
 import java.util.Map;
 
+// TODO possibly think of a more sophisticated cache invalidation/management, or replace with 3rd party (e.g. Caffeine)
 public class ForecastCache {
 
     // TODO manage capacity of the cache
