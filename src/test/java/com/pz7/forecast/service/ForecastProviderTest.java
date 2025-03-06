@@ -43,6 +43,22 @@ public class ForecastProviderTest {
         assertThat(cachedResult2).isEqualTo("Temperature: 75.0 °F, low: 72.3 °F, high: 76.8 °F (**cached indicator**)");
     }
 
+    @Test
+    public void getForecast_EmptyAddress() throws IOException, InterruptedException {
+        givenGeoServiceEmptyAddressResponse();
+
+        String result = forecastProvider.getForecast("");
+        assertThat(result).isEqualTo("\"text\" is not allowed to be empty");
+    }
+
+    @Test
+    public void getForecast_InvalidAddress() throws IOException, InterruptedException {
+        givenGeoServiceInvalidAddressResponse();
+
+        String result = forecastProvider.getForecast("aajasfasdf");
+        assertThat(result).isEqualTo("No coordinates found for address: aajasfasdf");
+    }
+
     private void givenGeoService(String address, String coordinates) throws IOException, InterruptedException {
         HttpResponse<String> geoResponse = mock(HttpResponse.class);
         when(geoResponse.statusCode()).thenReturn(200);
@@ -52,6 +68,30 @@ public class ForecastProviderTest {
         HttpRequest geoRequest = HttpRequest.newBuilder().uri(URI.create(
                 String.format("https://api.geoapify.com/v1/geocode/search?text=%s&apiKey=4bfc17fa7df34e28979b546b13705d94",
                         URLEncoder.encode(address, StandardCharsets.UTF_8)))).build();
+        when(httpClient.send(geoRequest, HttpResponse.BodyHandlers.ofString())).thenReturn(geoResponse);
+    }
+
+    private void givenGeoServiceEmptyAddressResponse() throws IOException, InterruptedException {
+        HttpResponse<String> geoResponse = mock(HttpResponse.class);
+        when(geoResponse.statusCode()).thenReturn(400);
+        when(geoResponse.body()).thenReturn("""
+                {"statusCode":400,"error":"Bad Request","message":"\\"text\\" is not allowed to be empty"}
+                """);
+        HttpRequest geoRequest = HttpRequest.newBuilder().uri(URI.create(
+                String.format("https://api.geoapify.com/v1/geocode/search?text=%s&apiKey=4bfc17fa7df34e28979b546b13705d94",
+                        URLEncoder.encode("", StandardCharsets.UTF_8)))).build();
+        when(httpClient.send(geoRequest, HttpResponse.BodyHandlers.ofString())).thenReturn(geoResponse);
+    }
+
+    private void givenGeoServiceInvalidAddressResponse() throws IOException, InterruptedException {
+        HttpResponse<String> geoResponse = mock(HttpResponse.class);
+        when(geoResponse.statusCode()).thenReturn(200);
+        when(geoResponse.body()).thenReturn("""
+                {"type":"FeatureCollection","features":[],"query":{"text":"aajasfasdf","parsed":{"street":"aajasfasdf","expected_type":"unknown"}}}
+                """);
+        HttpRequest geoRequest = HttpRequest.newBuilder().uri(URI.create(
+                String.format("https://api.geoapify.com/v1/geocode/search?text=%s&apiKey=4bfc17fa7df34e28979b546b13705d94",
+                        URLEncoder.encode("aajasfasdf", StandardCharsets.UTF_8)))).build();
         when(httpClient.send(geoRequest, HttpResponse.BodyHandlers.ofString())).thenReturn(geoResponse);
     }
 

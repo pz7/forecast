@@ -33,9 +33,13 @@ public class ForecastProvider {
             return cachedForecast + " (**cached indicator**)";
         }
 
-        GeoService.Coordinates coordinates = geoService.getCoordinates(address);
-        String forecast = weatherService.getForecast(coordinates);
-        forecastCache.put(address, forecast);
-        return forecast;
+        try {
+            GeoService.Coordinates coordinates = geoService.getCoordinates(address);
+            String forecast = weatherService.getForecast(coordinates);
+            forecastCache.put(address, forecast);
+            return forecast;
+        } catch (IllegalArgumentException e) {
+            return e.getMessage();
+        }
     }
 }

@@ -36,7 +36,13 @@ public class GeoService {
                 JSONObject geometry = features.getJSONObject(0).getJSONObject("geometry");
                 JSONArray coordinates = geometry.getJSONArray("coordinates");
                 return Coordinates.of(coordinates.getDouble(1), coordinates.getDouble(0));
+            } else {
+                throw new IllegalArgumentException("No coordinates found for address: " + address);
             }
+        } else if(response.statusCode() == 400) {
+            JSONObject jsonResponse = new JSONObject(response.body());
+            String message = jsonResponse.getString("message");
+            throw new IllegalArgumentException(message);
         }
 
         throw new IllegalStateException("Geo request failed: " + response.statusCode() + " " + response.body());
