@@ -44,6 +44,17 @@ public class ForecastProviderTest {
     }
 
     @Test
+    public void getForecast_HappyPathNoStateCode() throws IOException, InterruptedException {
+        String address = "Prague";
+
+        givenGeoServiceNoStateCode(address, "[50.073658, 14.418540]");
+        givenWeatherService("14.41854", "50.073658", "75.0", "72.3", "76.8");
+
+        String result = forecastProvider.getForecast(address);
+        assertThat(result).isEqualTo("Capital City of Prague, CZ: Temperature: 75.0 °F, low: 72.3 °F, high: 76.8 °F");
+    }
+
+    @Test
     public void getForecast_EmptyAddress() throws IOException, InterruptedException {
         givenGeoServiceEmptyAddressResponse();
 
@@ -65,6 +76,19 @@ public class ForecastProviderTest {
         when(geoResponse.body()).thenReturn(String.format("""
                 { "features": [{ "geometry": { "coordinates": %s },
                  "properties": { "city": "San Francisco", "state_code": "CA", "country_code": "us" } }] }
+                """, coordinates));
+        HttpRequest geoRequest = HttpRequest.newBuilder().uri(URI.create(
+                String.format("https://api.geoapify.com/v1/geocode/search?text=%s&apiKey=4bfc17fa7df34e28979b546b13705d94",
+                        URLEncoder.encode(address, StandardCharsets.UTF_8)))).build();
+        when(httpClient.send(geoRequest, HttpResponse.BodyHandlers.ofString())).thenReturn(geoResponse);
+    }
+
+    private void givenGeoServiceNoStateCode(String address, String coordinates) throws IOException, InterruptedException {
+        HttpResponse<String> geoResponse = mock(HttpResponse.class);
+        when(geoResponse.statusCode()).thenReturn(200);
+        when(geoResponse.body()).thenReturn(String.format("""
+                { "features": [{ "geometry": { "coordinates": %s },
+                 "properties": { "city": "Capital City of Prague", "country_code": "cz" } }] }
                 """, coordinates));
         HttpRequest geoRequest = HttpRequest.newBuilder().uri(URI.create(
                 String.format("https://api.geoapify.com/v1/geocode/search?text=%s&apiKey=4bfc17fa7df34e28979b546b13705d94",

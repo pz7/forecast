@@ -39,9 +39,9 @@ public class GeoService {
                 double lon = coordinates.getDouble(0);
 
                 JSONObject properties = features.getJSONObject(0).getJSONObject("properties");
-                String city = properties.getString("city");
-                String stateCode = properties.getString("state_code");
-                String countryCode = properties.getString("country_code");
+                String city = properties.optString("city", null);
+                String stateCode = properties.optString("state_code", null);
+                String countryCode = properties.optString("country_code", null);
 
                 return Response.of(city, stateCode, countryCode, Coordinates.of(lat, lon));
             } else {
