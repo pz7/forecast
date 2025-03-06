@@ -9,10 +9,12 @@ public class ForecastCacheTest {
 
     private static final long EXPIRATION_TIME_MS = 1000; // 1 second
     private ForecastCache forecastCache;
+    private TestTimeStampProvider testTimeStampProvider;
 
     @BeforeEach
     public void setUp() {
-        forecastCache = new ForecastCache(EXPIRATION_TIME_MS);
+        testTimeStampProvider = new TestTimeStampProvider();
+        forecastCache = new ForecastCache(EXPIRATION_TIME_MS, testTimeStampProvider);
     }
 
     @Test
@@ -32,8 +34,8 @@ public class ForecastCacheTest {
         String forecast = "Sunny";
 
         forecastCache.put(address, forecast);
-        // TODO Do not use wait for time specific tests, manipulate the time in the test instead
-        Thread.sleep(EXPIRATION_TIME_MS + 100); // Wait for the entry to expire
+
+        testTimeStampProvider.moveTimeForwardBy(EXPIRATION_TIME_MS + 1); // Simulates the expiration time passing
         String result = forecastCache.get(address);
 
         assertThat(result).isNull();

@@ -1,5 +1,7 @@
 package com.pz7.forecast.service;
 
+import com.pz7.forecast.time.DefaultTimeStampProvider;
+
 import java.io.IOException;
 import java.net.http.HttpClient;
 
@@ -16,7 +18,9 @@ public class ForecastProvider {
     }
 
     public ForecastProvider(HttpClient httpClient) {
-        this(new GeoService(httpClient), new WeatherService(httpClient), new ForecastCache(expirationTimeMs));
+        this(new GeoService(httpClient),
+                new WeatherService(httpClient),
+                new ForecastCache(expirationTimeMs, new DefaultTimeStampProvider()));
     }
 
     public ForecastProvider(GeoService geoService,

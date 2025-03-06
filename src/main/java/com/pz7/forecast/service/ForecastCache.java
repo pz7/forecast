@@ -1,29 +1,32 @@
 package com.pz7.forecast.service;
 
+import com.pz7.forecast.time.TimeStampProvider;
+
 import java.util.HashMap;
 import java.util.Map;
 
-// TODO possibly think of a more sophisticated cache invalidation/management, or replace with 3rd party (e.g. Caffeine)
 public class ForecastCache {
 
     // TODO manage capacity of the cache
     private final Map<String, CacheEntry> cache = new HashMap<>();
     private final long expirationTimeMs;
+    private final TimeStampProvider timeStampProvider;
 
-    public ForecastCache(long expirationTimeMs) {
+    public ForecastCache(long expirationTimeMs, TimeStampProvider timeStampProvider) {
         this.expirationTimeMs = expirationTimeMs;
+        this.timeStampProvider = timeStampProvider;
     }
 
     public void put(String address, String value) {
         String key = getKey(address);
-        cache.put(key, CacheEntry.of(value));
+        cache.put(key, CacheEntry.of(value, timeStampProvider.getTimeStamp()));
     }
 
     public String get(String address) {
         String key = getKey(address);
         CacheEntry cacheEntry = cache.get(key);
         if (cacheEntry != null) {
-            if (cacheEntry.isExpired(expirationTimeMs)) {
+            if (cacheEntry.isExpired(expirationTimeMs, timeStampProvider.getTimeStamp())) {
                 cache.remove(key);
                 return null;
             } else {
@@ -43,19 +46,17 @@ public class ForecastCache {
         public final String value;
         public final long timestamp;
 
-        private CacheEntry(String value) {
+        private CacheEntry(String value, long timeStamp) {
             this.value = value;
-            // TODO Use time provider to determine the time instead of System.currentTimeMillis()
-            this.timestamp = System.currentTimeMillis();
+            this.timestamp = timeStamp;
         }
 
-        public static CacheEntry of(String value) {
-            return new CacheEntry(value);
+        public static CacheEntry of(String value, long timeStamp) {
+            return new CacheEntry(value, timeStamp);
         }
 
-        public boolean isExpired(long expirationTimeMs) {
-            // TODO Use time provider to determine the time instead of System.currentTimeMillis()
-            return System.currentTimeMillis() - timestamp > expirationTimeMs;
+        public boolean isExpired(long expirationTimeMs, long currentTime) {
+            return currentTime - timestamp > expirationTimeMs;
         }
     }
 }
